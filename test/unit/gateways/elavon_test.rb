@@ -71,6 +71,22 @@ class ElavonTest < Test::Unit::TestCase
     assert_equal 'The transaction ID is invalid for this transaction type', response.message
   end
 
+  def test_successful_delete
+    @gateway.expects(:ssl_post).returns(successful_delete_response)
+
+    assert response = @gateway.delete('123')
+    assert_success response
+    assert_equal 'APPROVAL', response.message
+  end
+
+  def test_unsuccessful_delete
+    @gateway.expects(:ssl_post).returns(failed_delete_response)
+
+    assert response = @gateway.delete('123')
+    assert_failure response
+    assert_equal 'The transaction ID is invalid for this transaction type', response.message
+  end
+
   def test_successful_refund
     @gateway.expects(:ssl_post).returns(successful_refund_response)
 

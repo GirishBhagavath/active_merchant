@@ -47,7 +47,8 @@ module ActiveMerchant #:nodoc:
         :refund => 'CCRETURN',
         :authorize => 'CCAUTHONLY',
         :capture => 'CCFORCE',
-        :void => 'CCVOID'
+        :void => 'CCVOID',
+        :delete => 'CCDELETE'
       }
 
       # Initialize the Gateway
@@ -113,6 +114,7 @@ module ActiveMerchant #:nodoc:
         add_creditcard(form, options[:credit_card])
         add_customer_data(form, options)
         add_test_mode(form, options)
+        add_address(form, options)
         commit(:capture, money, form)
       end
 
@@ -145,6 +147,13 @@ module ActiveMerchant #:nodoc:
         commit(:void, nil, form)
       end
 
+      #Deletes and attempts a reversal on a Sale and Auth Only Credit transaction
+      def delete(identification, options = {})
+        form = {}
+        add_txn_id(form, identification)
+        add_test_mode(form, options)
+        commit(:delete, nil, form)
+      end
       # Make a credit to a card.  Use the refund method if you'd like to credit using
       # previous transaction
       #
